@@ -1,6 +1,5 @@
 import { SLACK_BOT_TOKEN, SLACK_SIGNING_SECRET } from './env';
 import { App, ExpressReceiver } from '@slack/bolt';
-import { http } from '@google-cloud/functions-framework';
 import { askAi } from './langchain';
 
 const receiver = new ExpressReceiver({
@@ -15,7 +14,7 @@ const app = new App({ receiver, token: SLACK_BOT_TOKEN });
 app.event('app_mention', async ({ event: { ts, thread_ts, text, channel }, say, logger, client }) => {
   logger.info(`Received message: ${text}, ts: ${ts}`);
 
-  const isThreadMode = text.includes('--thread');
+  const isThreadMode = thread_ts !== undefined || text.includes('--thread');
   const sentMessage = await (() => {
     if (isThreadMode) {
       return client.chat.postMessage({
@@ -42,4 +41,4 @@ app.event('app_mention', async ({ event: { ts, thread_ts, text, channel }, say, 
   return;
 });
 
-http('handleGpt', receiver.app);
+export const handleGpt = receiver.app;
