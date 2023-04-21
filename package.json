@@ -1,6 +1,7 @@
 {
   "name": "slack-gpt-internal",
   "license": "MIT",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "engines": {
     "node": "18"
@@ -13,8 +14,9 @@
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix",
-    "pretest": "npm run compile",
-    "posttest": "npm run lint"
+    "prepare": "yarn run compile",
+    "pretest": "yarn run compile",
+    "posttest": "yarn run lint"
   },
   "dependencies": {
     "@google-cloud/functions-framework": "3.2.0",
@@ -23,8 +25,7 @@
     "langchain": "0.0.59"
   },
   "devDependencies": {
-    "@types/express": "^4.17.17",
-    "@types/node": "18.15.13",
+    "@types/node": "^18.10",
     "@typescript-eslint/eslint-plugin": "5.59.0",
     "@typescript-eslint/parser": "5.59.0",
     "concurrently": "8.0.1",
@@ -35,5 +36,6 @@
     "nodemon": "2.0.22",
     "prettier": "2.8.7",
     "typescript": "5.0.4"
-  }
+  },
+  "packageManager": "yarn@3.5.0"
 }

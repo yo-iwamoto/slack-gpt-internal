@@ -11,31 +11,41 @@ const receiver = new ExpressReceiver({
 
 const app = new App({ receiver, token: SLACK_BOT_TOKEN });
 
-app.event('app_mention', async ({ event: { ts, thread_ts, text, channel }, say, logger, client }) => {
+app.event('app_mention', async ({ event: { ts, thread_ts, text, channel, user }, say, logger, client }) => {
   logger.info(`Received message: ${text}, ts: ${ts}`);
 
-  const isThreadMode = thread_ts !== undefined || text.includes('--thread');
+  const isInlineMode = thread_ts === undefined && text.includes('--inline');
   const sentMessage = await (() => {
-    if (isThreadMode) {
+    if (isInlineMode) {
+      return say('考え中です...🧐');
+    } else {
       return client.chat.postMessage({
         text: '考え中です...🧐',
         thread_ts: thread_ts ?? ts,
         channel,
       });
-    } else {
-      return say('考え中です...🧐');
     }
   })();
 
   const message = text.replace(/<@.*?>/g, '').trim();
-  askAi(message).then((result) => {
+  askAi(message).then(async (result) => {
+    console.log({ result });
     logger.info(`Result: ${result}, ts: ${ts}`);
     if (sentMessage.ts === undefined) return;
 
-    client.chat.update({
-      text: result,
-      channel,
+    if (isInlineMode) {
+      await say(`${user !== undefined ? `<@${user}> ` : ''}${result}`);
+    } else {
+      await client.chat.postMessage({
+        text: `${user !== undefined ? `<@${user}> ` : ''}${result}`,
+        channel,
+        thread_ts: thread_ts ?? ts,
+      });
+    }
+
+    await client.chat.delete({
       ts: sentMessage.ts,
+      channel,
     });
   });
   return;
