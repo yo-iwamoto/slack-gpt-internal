@@ -1,4 +1,32 @@
 {
   "name": "slack-gpt-internal",
-  "license": "MIT"
+  "license": "MIT",
+  "main": "./src/index.ts",
+  "engines": {
+    "node": "18"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development concurrently \"tsc -w\" \"nodemon --watch ./lib/ --exec yarn start\"",
+    "build": "tsc",
+    "start": "NODE_ENV=development functions-framework --source=lib/ --target=handleSlack"
+  },
+  "dependencies": {
+    "@google-cloud/functions-framework": "3.2.0",
+    "@slack/bolt": "3.13.0",
+    "dotenv": "16.0.3",
+    "langchain": "0.0.59"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.13",
+    "@typescript-eslint/eslint-plugin": "5.59.0",
+    "@typescript-eslint/parser": "5.59.0",
+    "concurrently": "8.0.1",
+    "eslint": "8.38.0",
+    "eslint-config-prettier": "8.8.0",
+    "eslint-plugin-import": "2.27.5",
+    "gts": "3.1.1",
+    "nodemon": "2.0.22",
+    "prettier": "2.8.7",
+    "typescript": "5.0.4"
+  }
 }
