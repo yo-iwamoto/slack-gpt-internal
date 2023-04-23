@@ -5,7 +5,7 @@ import { AIChatMessage, HumanChatMessage, SystemChatMessage } from 'langchain/sc
 const openAi = new ChatOpenAI({
   openAIApiKey: OPENAI_API_KEY,
   modelName: 'gpt-3.5-turbo',
-  maxTokens: 200,
+  temperature: 0.5,
 });
 
 export const askAi = async (message: string, history: { by: 'bot' | 'user'; text: string }[] = []) => {

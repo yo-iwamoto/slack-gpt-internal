@@ -11,6 +11,22 @@ const receiver = new ExpressReceiver({
 
 const app = new App({ receiver, token: SLACK_BOT_TOKEN });
 
+app.event('reaction_added', async ({ event, client, logger }) => {
+  if (event.item.type !== 'message') return;
+  const { ts, channel } = event.item;
+
+  switch (event.reaction) {
+    // when ❌、delete message
+    case 'x':
+      logger.info(`Delete message: ${ts}`);
+      client.chat.delete({
+        channel,
+        ts,
+      });
+      break;
+  }
+});
+
 app.event(
   'app_mention',
   async ({ event: { ts, thread_ts, text, channel, user }, say, logger, client, context: { botUserId } }) => {
@@ -26,8 +42,6 @@ app.event(
               })) ?? [],
           )
         : [];
-
-    console.log({ history });
 
     const isInlineMode = thread_ts === undefined && text.includes('--inline');
     const sentMessage = await (async () => {
@@ -50,19 +64,17 @@ app.event(
 
         const replyContent = `${user !== undefined ? `<@${user}> ` : ''}${result}`;
         if (isInlineMode) {
-          await say(replyContent);
+          say(replyContent);
         } else {
-          await Promise.all([
-            client.chat.delete({
-              ts: sentMessage.ts,
-              channel,
-            }),
-            client.chat.postMessage({
-              text: replyContent,
-              channel,
-              thread_ts: thread_ts ?? ts,
-            }),
-          ]);
+          client.chat.delete({
+            ts: sentMessage.ts,
+            channel,
+          });
+          client.chat.postMessage({
+            text: replyContent,
+            channel,
+            thread_ts: thread_ts ?? ts,
+          });
         }
       })
       .catch(async (err) => {
@@ -85,7 +97,6 @@ app.event(
           channel,
         });
       });
-    return;
   },
 );
 
