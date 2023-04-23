@@ -52,17 +52,18 @@ app.event(
         if (isInlineMode) {
           await say(replyContent);
         } else {
-          await client.chat.postMessage({
-            text: replyContent,
-            channel,
-            thread_ts: thread_ts ?? ts,
-          });
+          await Promise.all([
+            client.chat.delete({
+              ts: sentMessage.ts,
+              channel,
+            }),
+            client.chat.postMessage({
+              text: replyContent,
+              channel,
+              thread_ts: thread_ts ?? ts,
+            }),
+          ]);
         }
-
-        await client.chat.delete({
-          ts: sentMessage.ts,
-          channel,
-        });
       })
       .catch(async (err) => {
         if (sentMessage.ts === undefined) return;
