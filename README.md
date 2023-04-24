@@ -1,5 +1,7 @@
 # slack-gpt-internal
 
+特に会社固有の実装はないので、自社ワークスペースに Slack App を作成して API Key 等を設定・デプロイすれば誰でも使用できます。
+
 An implementation of AI chat using Langchain and integrates it into Slack bot.
 
 ## Getting Started
