@@ -30,3 +30,23 @@ SLACK_BOT_TOKEN=<YOUR_SLACK_BOT_TOKEN>
 ```
 ./scripts/deploy.sh
 ```
+
+deploy.sh にはランタイム変数の設定を含めていないので、デプロイ後に GCP コンソールから設定して再度デプロイするか、deploy.sh を書き換えて `--set-env-vars` を付けてください。
+
+
+## Development
+
+`app_mention`、`reaction_added` イベントを subscribe しており、開発環境でこれを受け取るには dev server の URL を Slack App の管理画面で設定する必要があります。
+
+```
+yarn dev
+```
+
+```
+ngrok http 8080
+// → 表示される Forwarding URL をコピー
+```
+
+https://api.slack.com/apps/{yout-app-id}/event-subscriptions で Request URL に {forwarding_url}/events を指定して Save Changes
+
+（ちゃんとやるなら開発環境専用の Slack App を作ってください）
