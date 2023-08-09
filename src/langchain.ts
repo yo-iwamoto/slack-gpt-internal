@@ -1,10 +1,10 @@
 import { ChatOpenAI } from 'langchain/chat_models/openai';
-import { OPENAI_API_KEY } from './env';
+import { CHAT_OPENAI_MODEL_NAME, OPENAI_API_KEY } from './env';
 import { AIChatMessage, HumanChatMessage, SystemChatMessage } from 'langchain/schema';
 
 const openAi = new ChatOpenAI({
   openAIApiKey: OPENAI_API_KEY,
-  modelName: 'gpt-3.5-turbo',
+  modelName: CHAT_OPENAI_MODEL_NAME,
   temperature: 0.5,
 });
 
